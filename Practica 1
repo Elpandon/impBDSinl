@@ -1,31 +1,113 @@
-/*mysql> CREATE TABLE DirectorioTelefonico (
-    -> IDCustomer INT (4) NOT NULL,
-    -> TypePhone  VARCHAR (30) NOT NULL,
-    -> Number VARCHAR (20) NOT NULL
+/*mysql> use Elpandon$default;
+Database changed
+mysql> CREATE TABLE Clientes (
+    -> CustomerID INT,
+    -> TypePhone VARCHAR(20),
+    -> Number VARCHAR(20)
     -> );
-Query OK, 0 rows affected, 1 warning (0.03 sec)
-mysql>  INSERT INTO DirectorioTelefonico (IDCustomer,TypePhone,Number)
-    ->  values
-    ->  (1001,'Celular','333-897-5421'),
-    ->  (1001,'Trabajo','333-897-6542'),
-    ->  (1001,'casa','333-698-9874'),
-    ->  (2002,'celular','333-963-6544'),
-    ->  (2002,'Trabajo','333-812-9856'),
-    ->  (3003,'celular','333-987-6541');
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> INSERT INTO Clientes (CustomerID, TypePhone, Number)
+    -> VALUES
+    -> ('1001', 'Celular', '333-897-5421'),
+    -> ('1001', 'Trabajo', '333-897-6542'),
+    -> ('1001', 'Casa', '333-698-9874'),
+    -> ('2002', 'Celular', '333-963-6544'),
+    -> ('2002', 'Trabajo', '333-812-9856'),
+    -> ('3003', 'Celular', '333-987-6541');
 Query OK, 6 rows affected (0.00 sec)
 Records: 6  Duplicates: 0  Warnings: 0
-mysql> SELECT * FROM DirectorioTelfonico;
-ERROR 1146 (42S02): Table 'Elpandon$default.DirectorioTelfonico' doesn't exist
-mysql> SELECT * FROM DirectorioTelefonico;
-+------------+-----------+--------------+
-| IDCustomer | TypePhone | Number       |
-+------------+-----------+--------------+
-|       1001 | Celular   | 333-897-5421 |
-|       1001 | Trabajo   | 333-897-6542 |
-|       1001 | casa      | 333-698-9874 |
-|       2002 | celular   | 333-963-6544 |
-|       2002 | Trabajo   | 333-812-9856 |
-|       3003 | celular   | 333-987-6541 |
-+------------+-----------+--------------+
-6 rows in set (0.00 sec)
+
+mysql> SELECT
+    -> CustomerID,
+    -> MAX(CASE WHEN TypePhone = 'Celular' THEN Number END) AS Celular,
+    -> MAX(CASE WHEN TypePhone = 'Trabajo' THEN Number END) AS Trabajo,
+    -> MAX(CASE WHEN TypePhone = 'Casa' THEN Number END) AS Casa
+    -> FROM
+    -> Clientes
+    -> GROUP BY
+    -> CustomerID;
++------------+--------------+--------------+--------------+
+| CustomerID | Celular      | Trabajo      | Casa         |
++------------+--------------+--------------+--------------+
+|       1001 | 333-897-5421 | 333-897-6542 | 333-698-9874 |
+|       2002 | 333-963-6544 | 333-812-9856 | NULL         |
+|       3003 | 333-987-6541 | NULL         | NULL         |
++------------+--------------+--------------+--------------+
+3 rows in set (0.00 sec)
+
+mysql> CREATE TABLE EtapasDesarrollo (
+    -> Desarrollo VARCHAR(50),
+    -> Etapa VARCHAR(50),
+    -> FechaFinalizacion DATE
+    -> );
+ERROR 1050 (42S01): Table 'EtapasDesarrollo' already exists
+mysql> INSERT INTO EtapasDesarrollo (Desarrollo, Etapa, FechaFinalizacion)
+    -> VALUES
+    -> ('RestAPI','1','01/02/2024'),
+    -> ('RestAPI', '2', '30/05/2024'),
+    -> ('RestAPI','3','29/06/2024'),
+    -> ('Web','1','28/10/2024'),
+    -> ('Web','2','20/11/2024'),
+    -> ('Web','3', NULL),
+    -> ('App','1','30/01/2025'),
+    -> ('App', '2',NULL);
+Query OK, 8 rows affected, 6 warnings (0.01 sec)
+Records: 8  Duplicates: 0  Warnings: 6
+
+mysql> SELECT DISTINCT Desarrollo
+    -> FROM EtapasDesarrollo
+    -> WHERE Etapa != 'Finalizado';
++------------+
+| Desarrollo |
++------------+
+| RestAPI    |
+| Web        |
+| App        |
++------------+
+3 rows in set (0.00 sec)
+
+mysql> CREATE TABLE Requisitos (
+    -> Descripcion VARCHAR(50)
+    -> );
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> INSERT INTO Requisitos (Descripcion)
+    -> VALUES
+    -> ('Geólogo'),
+    -> ('Astrónomo'),
+    -> ('Técnico');
+    -> VALUES
+Query OK, 3 rows affected (0.01 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+mysql> CREATE TABLE Candidatos (
+    -> IdCandidatos INT,
+    -> Descripcion VARCHAR(50)
+    -> );
+Query OK, 0 rows affected (0.08 sec)
+mysql> INSERT INTO Candidatos (IdCandidatos, Descripcion)
+    -> VALUES
+    -> ('1001','Geólogo'),
+    -> ('1001','Astrónomo'),
+    -> ('1001', 'Bioquímico'),
+    -> ('1001', 'Técnico'),
+    -> ('2002', 'Cirujano'),
+    -> ('2002', 'Mecánico'),
+    -> ('2002', 'Geólogo'),
+    -> ('3003', 'Geólogo'),
+    -> ('3003', 'Astrónomo'),
+    -> ('4004', 'Ingeniero');
+Query OK, 10 rows affected (0.01 sec)
+Records: 10  Duplicates: 0  Warnings: 0
+mysql> SELECT IdCandidatos
+    -> FROM Candidatos
+    -> WHERE Descripcion IN (SELECT Descripcion FROM Requisitos)
+    -> GROUP BY IdCandidatos
+    -> HAVING COUNT(DISTINCT Descripcion) = (SELECT COUNT(*) FROM Requisitos);
++--------------+
+| IdCandidatos |
++--------------+
+|         1001 |
++--------------+
+1 row in set (0.02 sec)
 */
