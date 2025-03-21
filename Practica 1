@@ -1,0 +1,31 @@
+/*mysql> CREATE TABLE DirectorioTelefonico (
+    -> IDCustomer INT (4) NOT NULL,
+    -> TypePhone  VARCHAR (30) NOT NULL,
+    -> Number VARCHAR (20) NOT NULL
+    -> );
+Query OK, 0 rows affected, 1 warning (0.03 sec)
+mysql>  INSERT INTO DirectorioTelefonico (IDCustomer,TypePhone,Number)
+    ->  values
+    ->  (1001,'Celular','333-897-5421'),
+    ->  (1001,'Trabajo','333-897-6542'),
+    ->  (1001,'casa','333-698-9874'),
+    ->  (2002,'celular','333-963-6544'),
+    ->  (2002,'Trabajo','333-812-9856'),
+    ->  (3003,'celular','333-987-6541');
+Query OK, 6 rows affected (0.00 sec)
+Records: 6  Duplicates: 0  Warnings: 0
+mysql> SELECT * FROM DirectorioTelfonico;
+ERROR 1146 (42S02): Table 'Elpandon$default.DirectorioTelfonico' doesn't exist
+mysql> SELECT * FROM DirectorioTelefonico;
++------------+-----------+--------------+
+| IDCustomer | TypePhone | Number       |
++------------+-----------+--------------+
+|       1001 | Celular   | 333-897-5421 |
+|       1001 | Trabajo   | 333-897-6542 |
+|       1001 | casa      | 333-698-9874 |
+|       2002 | celular   | 333-963-6544 |
+|       2002 | Trabajo   | 333-812-9856 |
+|       3003 | celular   | 333-987-6541 |
++------------+-----------+--------------+
+6 rows in set (0.00 sec)
+*/
