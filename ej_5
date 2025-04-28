@@ -1,0 +1,69 @@
+mysql> Select * from RPI;
++---------+------+------------+
+| Flujo   | Paso | Estado     |
++---------+------+------------+
+| Alpha   |    1 | Error      |
+| Alpha   |    2 | Finalizado |
+| Alpha   |    3 | Corriendo  |
+| Bravo   |    1 | Finalizado |
+| Bravo   |    2 | Finalizado |
+| Charlie |    1 | Corriendo  |
+| Charlie |    2 | Corriendo  |
+| Delta   |    1 | Error      |
+| Delta   |    2 | Error      |
+| Echo    |    1 | Corriendo  |
+| Echo    |    2 | Finalizado |
++---------+------+------------+
+11 rows in set (0.00 sec)
+
+mysql> SELECT Flujo,
+    ->        CASE 
+    ->            WHEN COUNT(DISTINCT Estado) = 1 THEN MAX(Estado)
+    ->            WHEN SUM(Estado = 'Error') > 0 
+    ->                 AND (SUM(Estado = 'Finalizado') > 0 OR SUM(estado = 'Corriendo') > 0) 
+    ->            THEN 'Indeterminado'
+    ->            WHEN SUM(Estado = 'Finalizado') > 0 
+    ->                 AND SUM(Estado = 'Corriendo') > 0 
+    ->            THEN 'Corriendo'
+    ->        END AS Estadol
+    -> FROM RPI
+    -> GROUP BY Flujo;
++---------+---------------+
+| Flujo   | Estadol       |
++---------+---------------+
+| Alpha   | Indeterminado |
+| Bravo   | Finalizado    |
+| Charlie | Corriendo     |
+| Delta   | Error         |
+| Echo    | Corriendo     |
++---------+---------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT * FROM CONCAT;
++-----------+-----------------+
+| Secuencia | Sintaxis        |
++-----------+-----------------+
+|         1 | SELECT          |
+|         2 | Producto,       |
+|         3 | Precio,         |
+|         4 | Disponibilidad, |
+|         5 | FROM            |
+|         6 | Productos       |
+|         7 | WHERE           |
+|         8 | Precio          |
+|         9 | >100            |
++-----------+-----------------+
+9 rows in set (0.00 sec)
+
+
+mysql> SELECT CONCAT('SELECT ', GROUP_CONCAT(Columna ORDER BY Columna SEPARATOR ', '), ' FROM concatenacion WHERE Precio >100') 
+    -> AS Sintaxis
+    -> FROM (SELECT 'Producto' AS Columna UNION ALL 
+    ->       SELECT 'Precio' UNION ALL 
+    ->       SELECT 'Disponibilidad') AS Columnas;
++------------------------------------------------------------------------------+
+| Sintaxis                                                                     |
++------------------------------------------------------------------------------+
+| SELECT Disponibilidad, Precio, Producto FROM concatenacion WHERE Precio >100 |
++------------------------------------------------------------------------------+
+1 row in set (0.00 sec)
